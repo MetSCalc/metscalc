@@ -1,9 +1,9 @@
-build: node_modules www
+build: node_modules www www/app.js www/index.html www/style.css
 
 node_modules: package.json
 	npm install
 
-www: www/app.js www/index.html www/style.css
+www:
 	mkdir -p www
 
 www/app.js: src/*.js
