@@ -29,7 +29,6 @@ class Calculator extends React.Component {
     this.handleBack = this.handleBack.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
-    this.handleKeyPress = this.handleKeyPress.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.afterUpdate = this.afterUpdate.bind(this)
   }
@@ -77,38 +76,18 @@ class Calculator extends React.Component {
         )}
 
         <h3>Demographics</h3>
-        <div className="form-group">
-          <label htmlFor="sex">Sex</label>
-          <div className="input-group btn-group btn-group-toggle" data-toggle="buttons">
-            <label className={`btn btn-light ${sex === msscalc.Sex.Female && 'active'}`}
-              role="button"
-              checked={sex === msscalc.Sex.Female}
-              aria-pressed={sex === msscalc.Sex.Female}
-              onClick={this.handleClick} onKeyPress={this.handleKeyPress}
-            >
-              <input type="radio" name="sex" value={msscalc.Sex.Female} autoComplete="off" />
-              Female
-            </label>
-            <label className= {`btn btn-light ${sex === msscalc.Sex.Male && 'active'}`}
-              role="button"
-              checked={sex === msscalc.Sex.Male}
-              aria-pressed={sex === msscalc.Sex.Male}
-              onClick={this.handleClick} onKeyPress={this.handleKeyPress}
-            >
-              <input type="radio" name="sex" value={msscalc.Sex.Male} autoComplete="off" />
-              Male
-            </label>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="race">Race and Ethnicity</label>
-          <select className="form-control" name="race" value={race} onChange={this.handleChange}>
-            <option value=""></option>
-            <option value={msscalc.RaceEthnicity.Hispanic}>Hispanic</option>
-            <option value={msscalc.RaceEthnicity.Black}>Non-Hispanic Black</option>
-            <option value={msscalc.RaceEthnicity.White}>Non-Hispanic White</option>
-          </select>
-        </div>
+        <ButtonGroup
+          name="sex" label="Sex" value={sex} options={msscalc.Sex}
+          onClick={this.handleClick}
+        />
+        <ButtonGroup
+          name="race" label="Race and Ethnicity" value={race} options={{
+            'Hispanic': msscalc.RaceEthnicity.Hispanic,
+            'Non-Hispanic Black': msscalc.RaceEthnicity.Black,
+            'Non-Hispanic White': msscalc.RaceEthnicity.White
+          }}
+          onClick={this.handleClick}
+        />
 
         <h3>Blood pressure</h3>
         <div className="form-group">
@@ -163,12 +142,9 @@ class Calculator extends React.Component {
   }
 
   handleClick (event) {
-    const input = event.target.getElementsByTagName('input')[0]
-    this.setState({ [input.name]: input.value }, this.afterUpdate)
-  }
-
-  handleKeyPress (event) {
-    console.log(event.nativeEvent)
+    if (event.target.tagName === 'INPUT') {
+      this.setState({ [event.target.name]: event.target.value }, this.afterUpdate)
+    }
   }
 
   handleSubmit (event) {
@@ -221,6 +197,44 @@ class Calculator extends React.Component {
       bmiz
     })
   }
+}
+
+function ButtonGroup (props) {
+  const { name, label, options, value, onClick, onKeyPress } = props
+
+  if (!options || options.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="form-group">
+      <label htmlFor={name}>{label}</label>
+      <div className="input-group btn-group btn-group-toggle" data-toggle="buttons">
+        {Object.keys(options).map(label => (
+          <Button key={label}
+            group={name} label={label} value={options[label]}
+            pressed={value === options[label]}
+            onClick={onClick} onKeyPress={onKeyPress}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Button (props) {
+  const { group, label, pressed, value, onClick, onKeyPress } = props
+
+  return (
+    <label className= {`btn btn-light ${pressed ? 'active' : ''}`}
+      role="button"
+      checked={pressed}
+      aria-pressed={pressed}
+      onClick={onClick} onKeyPress={onKeyPress}
+    >
+      <input type="radio" name={group} value={value} autoComplete="off" /> {label}
+    </label>
+  )
 }
 
 ReactDOM.render(<Calculator />, document.getElementById('calculator'))

@@ -1,3 +1,7 @@
 h1.title {
     text-align: center;
 }
+
+[role="button"].focus {
+    border-color: pink;
+}
