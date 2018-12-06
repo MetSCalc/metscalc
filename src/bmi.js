@@ -19,7 +19,7 @@ function BMIZscore (weight, height, sex, age) {
   assert(sex === Sex.Male || sex === Sex.Female, 'sex must be 1=male or 2=female')
 
   const bmi = BMIAdult(weight, height)
-  const { L, M, S } = bmiForAge.get(sex, age)
+  const { L, M, S } = bmiForAge.Get(sex, age)
 
   // See https://www.cdc.gov/nccdphp/dnpao/growthcharts/resources/sas.htm
   // Z = [ ((value / M)**L) – 1] / (S * L)
@@ -485,10 +485,7 @@ Sex,Agemos,L,M,S,P3,P5,P10,P25,P50,P75,P85,P90,P95,P97
 //   { 1: {48: {"L": -2.01118107, "M": 16.57502768, "S" 0.080592465], ... }
 //
 // If you want the LMS values for a 24 month old boy, you would write:
-//   let {L,M,S} = bmiForAge.boy(24)
-//
-// or more directly
-//   let {L,M,S} = bmiForAge.data[Sex.Male][24*2]
+//   let {L,M,S} = bmiForAge.Get(Sex.Male, 24)
 const bmiForAge = {
   data: bmiagerev.split('\n').reduce((bmiForAge, line, lineno) => {
     if (line === '') {
@@ -513,9 +510,8 @@ const bmiForAge = {
 
     return bmiForAge
   }, { [Sex.Male]: {}, [Sex.Female]: {} }),
-  boy: (agemos) => bmiForAge.get(Sex.Male, agemos),
-  girl: (agemos) => bmiForAge.get(Sex.Male, agemos),
-  get: (sex, agemos) => {
+
+  Get: (sex, agemos) => {
     if (agemos === 24) {
       return bmiForAge.data[sex][24]
     }
