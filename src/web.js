@@ -28,7 +28,10 @@ class Calculator extends React.Component {
 
     this.handleBack = this.handleBack.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.handleClick = this.handleClick.bind(this)
+    this.handleKeyPress = this.handleKeyPress.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.afterUpdate = this.afterUpdate.bind(this)
   }
 
   render () {
@@ -76,11 +79,26 @@ class Calculator extends React.Component {
         <h3>Demographics</h3>
         <div className="form-group">
           <label htmlFor="sex">Sex</label>
-          <select className="form-control" name="sex" value={sex} onChange={this.handleChange}>
-            <option value=""></option>
-            <option value={msscalc.Sex.Female}>Female</option>
-            <option value={msscalc.Sex.Male}>Male</option>
-          </select>
+          <div className="input-group btn-group btn-group-toggle" data-toggle="buttons">
+            <label className={`btn btn-light ${sex === msscalc.Sex.Female && 'active'}`}
+              role="button"
+              checked={sex === msscalc.Sex.Female}
+              aria-pressed={sex === msscalc.Sex.Female}
+              onClick={this.handleClick} onKeyPress={this.handleKeyPress}
+            >
+              <input type="radio" name="sex" value={msscalc.Sex.Female} autoComplete="off" />
+              Female
+            </label>
+            <label className= {`btn btn-light ${sex === msscalc.Sex.Male && 'active'}`}
+              role="button"
+              checked={sex === msscalc.Sex.Male}
+              aria-pressed={sex === msscalc.Sex.Male}
+              onClick={this.handleClick} onKeyPress={this.handleKeyPress}
+            >
+              <input type="radio" name="sex" value={msscalc.Sex.Male} autoComplete="off" />
+              Male
+            </label>
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="race">Race and Ethnicity</label>
@@ -141,28 +159,16 @@ class Calculator extends React.Component {
   }
 
   handleChange (event) {
-    this.setState({ [event.target.name]: event.target.value }, function () {
-      const { birth, appointment, weight, height, sex } = this.state
+    this.setState({ [event.target.name]: event.target.value }, this.afterUpdate)
+  }
 
-      if (!birth || !appointment) {
-        return
-      }
+  handleClick (event) {
+    const input = event.target.getElementsByTagName('input')[0]
+    this.setState({ [input.name]: input.value }, this.afterUpdate)
+  }
 
-      const age = moment(appointment).diff(moment(birth), 'years')
-
-      let bmiz = ''
-      const adolescent = age < 20
-      if (adolescent && height && weight && sex) {
-        const agemos = moment(appointment).diff(moment(birth), 'months')
-        const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
-        bmiz = bmi.BMIZscore(weight, height, sexord, agemos)
-      }
-
-      this.setState({
-        age,
-        bmiz
-      })
-    })
+  handleKeyPress (event) {
+    console.log(event.nativeEvent)
   }
 
   handleSubmit (event) {
@@ -191,6 +197,29 @@ class Calculator extends React.Component {
     })
 
     this.setState({ result })
+  }
+
+  afterUpdate () {
+    const { birth, appointment, weight, height, sex } = this.state
+
+    if (!birth || !appointment) {
+      return
+    }
+
+    const age = moment(appointment).diff(moment(birth), 'years')
+
+    let bmiz = ''
+    const adolescent = age < 20
+    if (adolescent && height && weight && sex) {
+      const agemos = moment(appointment).diff(moment(birth), 'months')
+      const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
+      bmiz = bmi.BMIZscore(weight, height, sexord, agemos)
+    }
+
+    this.setState({
+      age,
+      bmiz
+    })
   }
 }
 
