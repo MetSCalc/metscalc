@@ -3,6 +3,7 @@ var ReactDOM = window.ReactDOM || require('react-dom')
 var moment = window.moment || require('moment')
 
 const msscalc = require('./msscalc')
+const bmi = require('./bmi')
 
 class Calculator extends React.Component {
   constructor (props) {
@@ -56,6 +57,7 @@ class Calculator extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
+        <h3>Age</h3>
         <div className="form-group">
           <label htmlFor="birth">Birthdate</label>
           <input className="form-control" type="date" name="birth" value={birth} onChange={this.handleChange}></input>
@@ -64,6 +66,14 @@ class Calculator extends React.Component {
           <label htmlFor="appointment">Appointment Date</label>
           <input className="form-control" type="date" name="appointment" value={appointment} onChange={this.handleChange}></input>
         </div>
+        {age && (
+          <div className="form-group">
+            <label htmlFor="age">Age (years)</label>
+            <input className="form-control" name="age" value={age || ''} readOnly />
+          </div>
+        )}
+
+        <h3>Demographics</h3>
         <div className="form-group">
           <label htmlFor="sex">Sex</label>
           <select className="form-control" name="sex" value={sex} onChange={this.handleChange}>
@@ -81,14 +91,8 @@ class Calculator extends React.Component {
             <option value={msscalc.RaceEthnicity.White}>Non-Hispanic White</option>
           </select>
         </div>
-        <div className="form-group">
-          <label htmlFor="triglyceride">Trigylcerides (mg/dL)</label>
-          <input className="form-control" name="triglyceride" type="number" min="0" step="any" value={triglyceride} onChange={this.handleChange}></input>
-        </div>
-        <div className="form-group">
-          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
-          <input className="form-control" name="hdl" type="number" min="0" step="any" value={hdl} onChange={this.handleChange}></input>
-        </div>
+
+        <h3>Blood pressure</h3>
         <div className="form-group">
           <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
           <input className="form-control" name="sbp" type="number" min="0" step="any" value={sbp} onChange={this.handleChange}></input>
@@ -97,6 +101,17 @@ class Calculator extends React.Component {
           <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
           <input className="form-control" name="glucose" type="number" min="0" step="any" value={glucose} onChange={this.handleChange}></input>
         </div>
+
+        <h3>Measurements</h3>
+        <div className="form-group">
+          <label htmlFor="triglyceride">Trigylcerides (mg/dL)</label>
+          <input className="form-control" name="triglyceride" type="number" min="0" step="any" value={triglyceride} onChange={this.handleChange}></input>
+        </div>
+        <div className="form-group">
+          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
+          <input className="form-control" name="hdl" type="number" min="0" step="any" value={hdl} onChange={this.handleChange}></input>
+        </div>
+
         <div className="form-group">
           <label htmlFor="weight">Weight (kg)</label>
           <input className="form-control" name="weight" type="number" min="0" step="any" value={weight} onChange={this.handleChange}></input>
@@ -111,10 +126,8 @@ class Calculator extends React.Component {
         )}
         {adolescent && (
           <div className="form-group">
-            <label htmlFor="bmiz">
-              BMI Z-Score (<em><a href="https://zscore.research.chop.edu/" target="_blank" rel="noopener noreferrer">Calculator</a></em>)
-            </label>
-            <input className="form-control" name="bmiz" type="number" min="0" step="any" value={bmiz} onChange={this.handleChange}></input>
+            <label htmlFor="bmiz"> BMI Z-Score </label>
+            <input className="form-control" name="bmiz" value={bmiz} readOnly />
           </div>
         )}
         <button type="submit" className="btn btn-primary float-right">Calculate</button>
@@ -129,16 +142,25 @@ class Calculator extends React.Component {
 
   handleChange (event) {
     this.setState({ [event.target.name]: event.target.value }, function () {
-      const { birth, appointment } = this.state
+      const { birth, appointment, weight, height, sex } = this.state
 
       if (!birth || !appointment) {
         return
       }
 
-      const age = moment(this.state.appointment).diff(moment(this.state.birth), 'years')
+      const age = moment(appointment).diff(moment(birth), 'years')
+
+      let bmiz = ''
+      const adolescent = age < 20
+      if (adolescent && height && weight && sex) {
+        const agemos = moment(appointment).diff(moment(birth), 'months')
+        const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
+        bmiz = bmi.BMIZscore(weight, height, sexord, agemos)
+      }
 
       this.setState({
-        age
+        age,
+        bmiz
       })
     })
   }
