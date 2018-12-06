@@ -7,6 +7,7 @@ const Sex = {
 
 // BMIAdult calculates the body-mass-index for an adult older than 20 years old
 // given their weight in kilograms and height in meters.
+// See https://www.nhs.uk/common-health-questions/lifestyle/how-can-i-work-out-my-body-mass-index-bmi/
 function BMIAdult (weight, height) {
   return weight / (height * height)
 }

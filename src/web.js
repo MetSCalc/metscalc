@@ -152,18 +152,17 @@ class Calculator extends React.Component {
 
     let { sex, race, hdl, sbp, triglyceride, glucose, waist, birth, appointment, weight, height, bmiz } = this.state
 
-    // @see https://www.nhs.uk/common-health-questions/lifestyle/how-can-i-work-out-my-body-mass-index-bmi/
-    let bmi = null
+    let bmiadult = null
     if (height && weight) {
       const heightMeters = height / 100
-      bmi = weight / heightMeters / heightMeters
+      bmiadult = bmi.BMIAdult(weight, heightMeters)
     }
 
     const result = msscalc.CalculateMSS({
       age: moment(appointment).diff(moment(birth), 'years'),
       sex,
       race,
-      bmi,
+      bmi: bmiadult,
       hdl,
       sbp,
       triglyceride,
