@@ -142,9 +142,23 @@ class Calculator extends React.Component {
   }
 
   handleClick (event) {
-    if (event.target.tagName === 'INPUT') {
-      this.setState({ [event.target.name]: event.target.value }, this.afterUpdate)
+    let input
+
+    switch (event.target.tagName.toLowerCase()) {
+      case 'input':
+        input = event.target
+        break
+
+      case 'label':
+        input = event.target.getElementsByTagName('input')[0]
+        break
     }
+
+    if (!input) {
+      return
+    }
+
+    this.setState({ [input.name]: input.value }, this.afterUpdate)
   }
 
   handleSubmit (event) {
