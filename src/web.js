@@ -202,7 +202,8 @@ class Calculator extends React.Component {
     if (adolescent && height && weight && sex) {
       const agemos = moment(appointment).diff(moment(birth), 'months')
       const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
-      bmiz = bmi.BMIZscore(weight, height, sexord, agemos)
+      const heightMeters = height / 100
+      bmiz = bmi.BMIZscore(weight, heightMeters, sexord, agemos)
     }
 
     this.setState({
