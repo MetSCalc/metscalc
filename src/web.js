@@ -19,6 +19,7 @@ class Calculator extends React.Component {
       glucose: '',
       waist: '',
       weight: '',
+      weightUnits: 'lbs',
       height: '',
       bmiz: '',
       birth: '',
@@ -35,8 +36,8 @@ class Calculator extends React.Component {
 
   render () {
     let {
-      age, sex, race, weight, height, hdl, sbp, triglyceride, glucose, waist, bmiz,
-      birth, appointment, result
+      age, sex, race, weight, weightUnits, height, hdl, sbp, triglyceride,
+      glucose, waist, bmiz, birth, appointment, result
     } = this.state
 
     if (result) {
@@ -54,7 +55,6 @@ class Calculator extends React.Component {
       )
     }
 
-    const adult = age && age >= 20
     const adolescent = age && age < 20
 
     return (
@@ -112,14 +112,22 @@ class Calculator extends React.Component {
         </div>
 
         <div className="form-group">
-          <label htmlFor="weight">Weight (kg)</label>
-          <input className="form-control" name="weight" type="number" min="0" step="any" value={weight} onChange={this.handleChange}></input>
+          <label htmlFor="weight">Weight</label>
+          <div className="input-group">
+            <input className="form-control" name="weight" type="number" min="0" step="any" value={weight} onChange={this.handleChange}></input>
+            <div className="input-group-append">
+              <select className="custom-select" value={weightUnits} name="weightUnits" onChange={this.handleChange}>
+                <option value="lbs">Pounds (lbs)</option>
+                <option value="kg">Kilograms (kg)</option>
+              </select>
+            </div>
+          </div>
           <label htmlFor="height">Height (cm)</label>
           <input className="form-control" name="height" type="number" min="0" step="any" value={height} onChange={this.handleChange}></input>
         </div>
-        {adult && (
+        {!adolescent && (
           <div className="form-group">
-            <label htmlFor="waist">Waistline Circumference (cm)</label>
+            <label htmlFor="waist">Waist Circumference (cm) <em>(if available)</em></label>
             <input className="form-control" name="waist" type="number" min="0" step="any" value={waist} onChange={this.handleChange}></input>
           </div>
         )}
@@ -166,12 +174,16 @@ class Calculator extends React.Component {
   handleSubmit (event) {
     event.preventDefault()
 
-    let { sex, race, hdl, sbp, triglyceride, glucose, waist, birth, appointment, weight, height, bmiz } = this.state
+    let {
+      sex, race, hdl, sbp, triglyceride, glucose, waist, birth, appointment,
+      weight, weightUnits, height, bmiz
+    } = this.state
 
     let bmiadult = null
     if (height && weight) {
+      const weightKG = kilograms(weight, weightUnits)
       const heightMeters = height / 100
-      bmiadult = bmi.BMIAdult(weight, heightMeters)
+      bmiadult = bmi.BMIAdult(weightKG, heightMeters)
     }
 
     const result = msscalc.CalculateMSS({
@@ -191,7 +203,7 @@ class Calculator extends React.Component {
   }
 
   afterUpdate () {
-    const { birth, appointment, weight, height, sex } = this.state
+    const { birth, appointment, weight, weightUnits, height, sex } = this.state
 
     if (!birth || !appointment) {
       return this.setState({
@@ -207,8 +219,9 @@ class Calculator extends React.Component {
     if (adolescent && height && weight && sex) {
       const agemos = moment(appointment).diff(moment(birth), 'months')
       const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
+      const weightKG = kilograms(weight, weightUnits)
       const heightMeters = height / 100
-      bmiz = bmi.BMIZscore(weight, heightMeters, sexord, agemos)
+      bmiz = bmi.BMIZscore(weightKG, heightMeters, sexord, agemos)
     }
 
     this.setState({
@@ -216,6 +229,25 @@ class Calculator extends React.Component {
       bmiz
     })
   }
+}
+
+function kilograms (mass, units) {
+  if (isNaN(parseFloat(mass))) {
+    console.error('mass must be a number; got:', mass)
+    return null
+  }
+
+  switch (units) {
+    case 'kg':
+      return mass
+
+    case 'lbs':
+    // https://www.google.com/search?q=pounds+to+kg
+      return mass / 2.205
+  }
+
+  console.error("units must be 'kg' or 'lbs'; got:", units)
+  return null
 }
 
 function ButtonGroup (props) {
