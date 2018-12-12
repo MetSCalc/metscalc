@@ -18,9 +18,11 @@ class Calculator extends React.Component {
       triglyceride: '',
       glucose: '',
       waist: '',
+      waistUnit: 'cm',
       weight: '',
-      weightUnits: 'lbs',
+      weightUnit: 'kg',
       height: '',
+      heightUnit: 'cm',
       bmiz: '',
       birth: '',
       appointment: moment().format(moment.HTML5_FMT.DATE),
@@ -36,8 +38,8 @@ class Calculator extends React.Component {
 
   render () {
     let {
-      age, sex, race, weight, weightUnits, height, hdl, sbp, triglyceride,
-      glucose, waist, bmiz, birth, appointment, result
+      age, sex, race, weight, weightUnit, height, heightUnit, hdl, sbp, triglyceride,
+      glucose, waist, waistUnit, bmiz, birth, appointment, result
     } = this.state
 
     if (result) {
@@ -116,19 +118,37 @@ class Calculator extends React.Component {
           <div className="input-group">
             <input className="form-control" name="weight" type="number" min="0" step="any" value={weight} onChange={this.handleChange}></input>
             <div className="input-group-append">
-              <select className="custom-select" value={weightUnits} name="weightUnits" onChange={this.handleChange}>
+              <select className="custom-select" value={weightUnit} name="weightUnit" onChange={this.handleChange}>
                 <option value="lbs">Pounds (lbs)</option>
                 <option value="kg">Kilograms (kg)</option>
               </select>
             </div>
           </div>
-          <label htmlFor="height">Height (cm)</label>
-          <input className="form-control" name="height" type="number" min="0" step="any" value={height} onChange={this.handleChange}></input>
+          <label htmlFor="height">Height</label>
+          <div className="input-group">
+            <input className="form-control" name="height" type="number" min="0" step="any" value={height} onChange={this.handleChange}></input>
+            <div className="input-group-append">
+              <select className="custom-select" value={heightUnit} name="heightUnit" onChange={this.handleChange}>
+                <option value="in">Inches (in)</option>
+                <option value="cm">Centimeters (cm)</option>
+                <option value="m">Meters (m)</option>
+              </select>
+            </div>
+          </div>
         </div>
         {!adolescent && (
           <div className="form-group">
-            <label htmlFor="waist">Waist Circumference (cm) <em>(if available)</em></label>
-            <input className="form-control" name="waist" type="number" min="0" step="any" value={waist} onChange={this.handleChange}></input>
+            <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
+            <div className="input-group">
+              <input className="form-control" name="waist" type="number" min="0" step="any" value={waist} onChange={this.handleChange}></input>
+              <div className="input-group-append">
+                <select className="custom-select" value={waistUnit} name="waistUnit" onChange={this.handleChange}>
+                  <option value="in">Inches (in)</option>
+                  <option value="cm">Centimeters (cm)</option>
+                  <option value="m">Meters (m)</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
         {adolescent && (
@@ -175,14 +195,14 @@ class Calculator extends React.Component {
     event.preventDefault()
 
     let {
-      sex, race, hdl, sbp, triglyceride, glucose, waist, birth, appointment,
-      weight, weightUnits, height, bmiz
+      sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
+      birth, appointment, weight, weightUnit, height, heightUnit, bmiz
     } = this.state
 
     let bmiadult = null
     if (height && weight) {
-      const weightKG = kilograms(weight, weightUnits)
-      const heightMeters = height / 100
+      const weightKG = kilograms(weight, weightUnit)
+      const heightMeters = meters(height, heightUnit)
       bmiadult = bmi.BMIAdult(weightKG, heightMeters)
     }
 
@@ -196,14 +216,14 @@ class Calculator extends React.Component {
       triglyceride,
       glucose,
       bmiZScore: bmiz,
-      waist
+      waist: centimeters(waist, waistUnit)
     })
 
     this.setState({ result })
   }
 
   afterUpdate () {
-    const { birth, appointment, weight, weightUnits, height, sex } = this.state
+    const { birth, appointment, weight, weightUnit, height, heightUnit, sex } = this.state
 
     if (!birth || !appointment) {
       return this.setState({
@@ -219,8 +239,8 @@ class Calculator extends React.Component {
     if (adolescent && height && weight && sex) {
       const agemos = moment(appointment).diff(moment(birth), 'months')
       const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
-      const weightKG = kilograms(weight, weightUnits)
-      const heightMeters = height / 100
+      const weightKG = kilograms(weight, weightUnit)
+      const heightMeters = meters(height, heightUnit)
       bmiz = bmi.BMIZscore(weightKG, heightMeters, sexord, agemos)
     }
 
@@ -231,6 +251,52 @@ class Calculator extends React.Component {
   }
 }
 
+// meters converts the length from units into meters.
+function meters (length, units) {
+  if (isNaN(parseFloat(length))) {
+    console.error('length must be a number; got:', length)
+    return null
+  }
+
+  switch (units) {
+    case 'm':
+      return length
+
+    case 'cm':
+      return length / 100
+
+    case 'in':
+      // https://www.google.com/search?q=in+to+m
+      return length / 39.37
+  }
+
+  console.error("units must be 'm', 'cm', or 'in'; got:", units)
+  return null
+}
+
+function centimeters (length, units) {
+  if (isNaN(parseFloat(length))) {
+    console.error('length must be a number; got:', length)
+    return null
+  }
+
+  switch (units) {
+    case 'cm':
+      return length
+
+    case 'm':
+      return length * 100
+
+    case 'in':
+      // https://www.google.com/search?q=in+to+cm
+      return length * 2.54
+  }
+
+  console.error("units must be 'm', 'cm', or 'in'; got:", units)
+  return null
+}
+
+// kilograms converts the mass from units into kilograms.
 function kilograms (mass, units) {
   if (isNaN(parseFloat(mass))) {
     console.error('mass must be a number; got:', mass)
