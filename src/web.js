@@ -61,16 +61,18 @@ class Calculator extends React.Component {
       <form onSubmit={this.handleSubmit}>
         <h3>Age</h3>
         <div className="form-group">
-          <label htmlFor="birth">Birthdate</label>
+          <label htmlFor="birth">Birthdate <em>(if younger than 20 years old)</em></label>
           <input className="form-control" type="date" name="birth" value={birth} onChange={this.handleChange}></input>
         </div>
-        <div className="form-group">
-          <label htmlFor="appointment">Appointment Date</label>
-          <input className="form-control" type="date" name="appointment" value={appointment} onChange={this.handleChange}></input>
-        </div>
+        {birth && (
+          <div className="form-group">
+            <label htmlFor="appointment">Appointment Date</label>
+            <input className="form-control" type="date" name="appointment" value={appointment} onChange={this.handleChange}></input>
+          </div>
+        )}
         {age && (
           <div className="form-group">
-            <label htmlFor="age">Age (years)</label>
+            <label htmlFor="age">Age at Appointment (years)</label>
             <input className="form-control" name="age" value={age || ''} readOnly />
           </div>
         )}
@@ -192,7 +194,10 @@ class Calculator extends React.Component {
     const { birth, appointment, weight, height, sex } = this.state
 
     if (!birth || !appointment) {
-      return
+      return this.setState({
+        age: null,
+        bmiz: ''
+      })
     }
 
     const age = moment(appointment).diff(moment(birth), 'years')
