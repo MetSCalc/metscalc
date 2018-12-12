@@ -23,6 +23,7 @@ class Calculator extends React.Component {
       weightUnit: 'kg',
       height: '',
       heightUnit: 'cm',
+      bmiadult: '',
       bmiz: '',
       birth: '',
       appointment: moment().format(moment.HTML5_FMT.DATE),
@@ -39,23 +40,8 @@ class Calculator extends React.Component {
   render () {
     let {
       age, sex, race, weight, weightUnit, height, heightUnit, hdl, sbp, triglyceride,
-      glucose, waist, waistUnit, bmiz, birth, appointment, result
+      glucose, waist, waistUnit, bmiadult, bmiz, birth, appointment, result
     } = this.state
-
-    if (result) {
-      return (
-        <div className="result">
-          <h2>Result</h2>
-          {result.mets_z_bmi && (
-            <p>Z-Score based on Body Mass Index<br />{result.mets_z_bmi}</p>
-          )}
-          {result.mets_z_wc && (
-            <p>Z-Score based on Waistline<br />{result.mets_z_wc}</p>
-          )}
-          <button onClick={this.handleBack} className="btn btn-primary">Back</button>
-        </div>
-      )
-    }
 
     const adolescent = age && age < 20
 
@@ -146,6 +132,14 @@ class Calculator extends React.Component {
             />
           </div>
         )}
+
+        {bmiadult && (
+          <div className="form-group">
+            <label htmlFor="bmiadult"> BMI </label>
+            <input className="form-control" name="bmiadult" value={bmiadult} readOnly />
+          </div>
+        )}
+
         {adolescent && (
           <div className="form-group">
             <label htmlFor="bmiz"> BMI Z-Score </label>
@@ -161,6 +155,23 @@ class Calculator extends React.Component {
         >
           Calculate
         </button>
+
+        {result && (
+          <div className="result">
+            <h2>Results</h2>
+            {result.mets_z_bmi && (
+              <p>Z-Score based on Body Mass Index
+                <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
+              </p>
+            )}
+            {result.mets_z_wc && (
+              <p>Z-Score based on Waistline
+                <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
+              </p>
+            )}
+          </div>
+        )}
+
       </form>
     )
   }
@@ -198,16 +209,9 @@ class Calculator extends React.Component {
     event.preventDefault()
 
     let {
-      age, sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
-      birth, appointment, weight, weightUnit, height, heightUnit, bmiz
+      age, bmiadult, sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
+      birth, appointment, bmiz
     } = this.state
-
-    let bmiadult = null
-    if (height && weight) {
-      const weightKG = kilograms(weight, weightUnit)
-      const heightMeters = meters(height, heightUnit)
-      bmiadult = bmi.BMIAdult(weightKG, heightMeters)
-    }
 
     const result = msscalc.CalculateMSS({
       age: age ? moment(appointment).diff(moment(birth), 'years') : 25,
@@ -228,28 +232,32 @@ class Calculator extends React.Component {
   afterUpdate () {
     const { birth, appointment, weight, weightUnit, height, heightUnit, sex } = this.state
 
-    if (!birth || !appointment) {
-      return this.setState({
-        age: null,
-        bmiz: ''
-      })
+    let age = null
+    let bmiz = ''
+    let bmiadult = ''
+
+    if (birth && appointment) {
+      age = moment(appointment).diff(moment(birth), 'years')
     }
 
-    const age = moment(appointment).diff(moment(birth), 'years')
-
-    let bmiz = ''
-    const adolescent = age < 20
-    if (adolescent && height && weight && sex) {
-      const agemos = moment(appointment).diff(moment(birth), 'months')
-      const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
+    if (height && weight) {
       const weightKG = kilograms(weight, weightUnit)
       const heightMeters = meters(height, heightUnit)
-      bmiz = bmi.BMIZscore(weightKG, heightMeters, sexord, agemos)
+
+      bmiadult = bmi.BMIAdult(weightKG, heightMeters)
+
+      const adolescent = age && age < 20
+      if (adolescent && sex) {
+        const agemos = moment(appointment).diff(moment(birth), 'months')
+        const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
+        bmiz = bmi.BMIZscore(weightKG, heightMeters, sexord, agemos)
+      }
     }
 
     this.setState({
       age,
-      bmiz
+      bmiz,
+      bmiadult: bmiadult
     })
   }
 }
