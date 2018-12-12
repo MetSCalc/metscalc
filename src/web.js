@@ -115,40 +115,35 @@ class Calculator extends React.Component {
 
         <div className="form-group">
           <label htmlFor="weight">Weight</label>
-          <div className="input-group">
-            <input className="form-control" name="weight" type="number" min="0" step="any" value={weight} onChange={this.handleChange}></input>
-            <div className="input-group-append">
-              <select className="custom-select" value={weightUnit} name="weightUnit" onChange={this.handleChange}>
-                <option value="lbs">Pounds (lbs)</option>
-                <option value="kg">Kilograms (kg)</option>
-              </select>
-            </div>
-          </div>
+          <Measurement name="weight" value={weight} unit={weightUnit}
+            onValueChange={this.handleChange} onUnitChange={this.handleChange}
+            units={{
+              lbs: 'Pounds (lbs)',
+              kg: 'Kilograms (kg)'
+            }}
+          />
+
           <label htmlFor="height">Height</label>
-          <div className="input-group">
-            <input className="form-control" name="height" type="number" min="0" step="any" value={height} onChange={this.handleChange}></input>
-            <div className="input-group-append">
-              <select className="custom-select" value={heightUnit} name="heightUnit" onChange={this.handleChange}>
-                <option value="in">Inches (in)</option>
-                <option value="cm">Centimeters (cm)</option>
-                <option value="m">Meters (m)</option>
-              </select>
-            </div>
-          </div>
+          <Measurement name="height" value={height} unit={heightUnit}
+            onValueChange={this.handleChange} onUnitChange={this.handleChange}
+            units={{
+              in: 'Inches (in)',
+              cm: 'Centimeters (cm)',
+              m: 'Meters (m)'
+            }}
+          />
         </div>
         {!adolescent && (
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
-            <div className="input-group">
-              <input className="form-control" name="waist" type="number" min="0" step="any" value={waist} onChange={this.handleChange}></input>
-              <div className="input-group-append">
-                <select className="custom-select" value={waistUnit} name="waistUnit" onChange={this.handleChange}>
-                  <option value="in">Inches (in)</option>
-                  <option value="cm">Centimeters (cm)</option>
-                  <option value="m">Meters (m)</option>
-                </select>
-              </div>
-            </div>
+            <Measurement name="waist" value={waist} unit={waistUnit}
+              onValueChange={this.handleChange} onUnitChange={this.handleChange}
+              units={{
+                in: 'Inches (in)',
+                cm: 'Centimeters (cm)',
+                m: 'Meters (m)'
+              }}
+            />
           </div>
         )}
         {adolescent && (
@@ -351,6 +346,27 @@ function Button (props) {
     >
       <input type="radio" name={group} value={value} autoComplete="off" /> {label}
     </label>
+  )
+}
+
+function Measurement (props) {
+  const {
+    name, unit, units, value, onValueChange, onUnitChange
+  } = props
+
+  return (
+    <div className="input-group">
+      <input className="form-control" name={name} type="number" min="0" step="any" value={value} onChange={onValueChange}></input>
+      {units && (
+        <div className="input-group-append">
+          <select className="custom-select" value={unit} name={`${name}Unit`} onChange={onUnitChange}>
+            {Object.keys(units).map(key => (
+              <option key={key} value={key}>{units[key]}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
   )
 }
 
