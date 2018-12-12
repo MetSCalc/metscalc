@@ -152,7 +152,15 @@ class Calculator extends React.Component {
             <input className="form-control" name="bmiz" value={bmiz} readOnly />
           </div>
         )}
-        <button type="submit" className="btn btn-primary float-right">Calculate</button>
+
+        <button type="submit" className="btn btn-primary float-right"
+          disabled={
+            !(sex && race && sbp && glucose && hdl && triglyceride) ||
+            !((weight && height) || waist)
+          }
+        >
+          Calculate
+        </button>
       </form>
     )
   }
@@ -190,7 +198,7 @@ class Calculator extends React.Component {
     event.preventDefault()
 
     let {
-      sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
+      age, sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
       birth, appointment, weight, weightUnit, height, heightUnit, bmiz
     } = this.state
 
@@ -202,7 +210,7 @@ class Calculator extends React.Component {
     }
 
     const result = msscalc.CalculateMSS({
-      age: moment(appointment).diff(moment(birth), 'years'),
+      age: age ? moment(appointment).diff(moment(birth), 'years') : 25,
       sex,
       race,
       bmi: bmiadult,
@@ -211,7 +219,7 @@ class Calculator extends React.Component {
       triglyceride,
       glucose,
       bmiZScore: bmiz,
-      waist: centimeters(waist, waistUnit)
+      waist: centimeters(waist, waistUnit) || null
     })
 
     this.setState({ result })
