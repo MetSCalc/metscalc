@@ -48,19 +48,22 @@ function CalculateMSS (args) {
     /* Male */
     switch (race) {
       case RaceEthnicity.Black:
+        // Adult Male Black Non-Hispanic
         return {
           mets_z_bmi: bmi ? -4.8134 + 0.0460 * bmi - 0.0233 * hdl + 0.0020 * sbp + 0.5983 * log(triglyceride) + 0.0166 * glucose : null,
-          mets_z_wc: waist ? (-7.1913 + 0.0304 * waist - 0.0095 * hdl + 0.0054 * sbp + 0.4455 * log(triglyceride) + 0.0225 * glucose) : null
+          mets_z_wc: waist ? (-6.3767 + 0.0232 * waist - 0.0175 * hdl + 0.0040 * sbp + 0.5400 * log(triglyceride) + 0.0203 * glucose) : null
         }
       case RaceEthnicity.Hispanic:
+        // Adult Male Hispanic
         return {
           mets_z_bmi: bmi ? -4.8198 + 0.0355 * bmi - 0.0303 * hdl + 0.0051 * sbp + 0.7835 * log(triglyceride) + 0.0104 * glucose : null,
-          mets_z_wc: waist ? (-7.7641 + 0.0162 * waist - 0.0157 * hdl + 0.0084 * sbp + 0.8872 * log(triglyceride) + 0.0206 * glucose) : null
+          mets_z_wc: waist ? (-5.5541 + 0.0135 * waist - 0.0278 * hdl + 0.0054 * sbp + 0.8340 * log(triglyceride) + 0.0105 * glucose) : null
         }
       case RaceEthnicity.White:
+        // Adult Male White Non-Hispanic
         return {
           mets_z_bmi: bmi ? -4.8316 + 0.0315 * bmi - 0.0272 * hdl + 0.0044 * sbp + 0.8018 * log(triglyceride) + 0.0101 * glucose : null,
-          mets_z_wc: waist ? (-7.2591 + 0.0254 * waist - 0.0120 * hdl + 0.0075 * sbp + 0.5800 * log(triglyceride) + 0.0203 * glucose) : null
+          mets_z_wc: waist ? (-5.4559 + 0.0125 * waist - 0.0251 * hdl + 0.0047 * sbp + 0.8244 * log(triglyceride) + 0.0106 * glucose) : null
         }
     }
   }
