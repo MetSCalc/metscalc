@@ -1,0 +1,17 @@
+h1.title {
+    text-align: center;
+}
+
+[role="button"].focus {
+    border-color: pink;
+}
+
+.result {
+    clear: both;
+}
+
+.result .amount {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+}
