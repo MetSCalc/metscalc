@@ -1,6 +1,8 @@
 Metabolic Syndrome Severity Calculator
 ======================================
 
+[![DOI](https://zenodo.org/badge/159721335.svg)](https://zenodo.org/badge/latestdoi/159721335)
+
 Calculates someone's Metabolic Syndrome Severity Score.
 
  * Website: https://metscalc.github.io/
