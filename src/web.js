@@ -319,8 +319,8 @@ function kilograms (mass, units) {
       return mass
 
     case 'lbs':
-    // https://www.google.com/search?q=pounds+to+kg
-      return mass / 2.205
+      // See https://www.ngs.noaa.gov/PUBS_LIB/FedRegister/FRdoc59-5442.pdf
+      return mass * 0.45359237
   }
 
   console.error("units must be 'kg' or 'lbs'; got:", units)
