@@ -1,5 +1,5 @@
-h1.title.abbrev {
-    display: none;
+.container.clearfix {
+    margin-bottom: 1em;
 }
 
 h1.title {
@@ -21,10 +21,7 @@ h1.title {
 }
 
 @media screen and (max-width: 399px) {
-    h1.title {
+    .collapsible {
         display: none;
-    }
-    h1.title.abbrev {
-        display: block;
     }
 }
