@@ -136,14 +136,14 @@ class Calculator extends React.Component {
         {bmiadult && (
           <div className="form-group">
             <label htmlFor="bmiadult"> BMI </label>
-            <input className="form-control" name="bmiadult" value={bmiadult} readOnly />
+            <input className="form-control" name="bmiadult" value={bmiadult.toFixed(3)} readOnly />
           </div>
         )}
 
-        {adolescent && (
+        {adolescent && bmiz && (
           <div className="form-group">
             <label htmlFor="bmiz"> BMI Z-Score </label>
-            <input className="form-control" name="bmiz" value={bmiz} readOnly />
+            <input className="form-control" name="bmiz" value={bmiz.toFixed(3)} readOnly />
           </div>
         )}
 
