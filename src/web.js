@@ -160,15 +160,33 @@ class Calculator extends React.Component {
           <div className="result">
             <h2>Results</h2>
             {result.mets_z_bmi && (
-              <p>Z-Score based on Body Mass Index
+              <p>MetS Z-Score based on Body Mass Index
                 <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
               </p>
             )}
+            {result.mets_z_bmi && (
+              <p>MetS Percentile based on Body Mass Index
+                <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
+              </p>
+            )}
+
             {result.mets_z_wc && (
-              <p>Z-Score based on Waistline
+              <p>MetS Z-Score based on Waistline
                 <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
               </p>
             )}
+            {result.mets_z_wc && (
+              <p>MetS Percentile based on Waistline
+                <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
+              </p>
+            )}
+
+            {bmiz && (
+              <p>BMI Percentile
+                <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
+              </p>
+            )}
+
           </div>
         )}
 
