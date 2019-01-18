@@ -1,3 +1,7 @@
+h1.title.abbrev {
+    display: none;
+}
+
 h1.title {
     text-align: center;
 }
@@ -14,4 +18,13 @@ h1.title {
     display: block;
     font-size: 2em;
     font-weight: bold;
+}
+
+@media screen and (max-width: 399px) {
+    h1.title {
+        display: none;
+    }
+    h1.title.abbrev {
+        display: block;
+    }
 }

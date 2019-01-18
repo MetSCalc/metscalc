@@ -91,7 +91,7 @@ class Calculator extends React.Component {
 
         <h3>Measurements</h3>
         <div className="form-group">
-          <label htmlFor="triglyceride">Trigylcerides (mg/dL)</label>
+          <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
           <input className="form-control" name="triglyceride" type="number" min="0" step="any" value={triglyceride} onChange={this.handleChange}></input>
         </div>
         <div className="form-group">
