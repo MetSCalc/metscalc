@@ -1,7 +1,17 @@
 Changelog
 =========
 
+[0.1.0-alpha2]
+
+ * Add max bound and check validity of fields
+ * Enable Calculate always and report errors on click
+ * Update documentation with canonical URL
+ * Improve look on mobile devices
+ * Add percentiles for MetS and BMI z-scores
+ * Limit display of BMI and BMI Z-Score to 1000ths
+ * Use US Government standard for lb-kg conversion
+
 [0.1.0-alpha]
 
-  * Initial version
+ * Initial version
 
