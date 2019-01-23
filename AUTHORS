@@ -1,7 +1,7 @@
-Metscalc Authors
-================
+MetS Calc Authors
+=================
 
-Metscalc is being developed for Dr. Matthew J. Gurka <matthewgurka@ufl.edu> at
+MetS Calc is being developed for Dr. Matthew J. Gurka <matthewgurka@ufl.edu> at
 the University of Florida and Dr. Mark DeBoer at the University of Virginia by
 the Clinical and Translational Science Institute's Informatics and Technology
 group (http://ufl.to/ctsit) under the leadership of
@@ -15,4 +15,12 @@ Contributors
  * Kevin S. Hanson <kshanson@ufl.edu>
  * Jamillah Khan <jkhan@ufl.edu>
  * Taeber Rapczak <taeber@ufl.edu>
+
+
+Early Implementation
+--------------------
+
+Special thanks to Travis Maynard, implementer of an early implementation of
+MetS Calc. Some of our code is based on his MIT-licensed code:
+https://github.com/travm/ZMI.
 

@@ -68,6 +68,7 @@ class Calculator extends React.Component {
         <h3>Demographics</h3>
         <ButtonGroup
           name="sex" label="Sex" value={sex} options={msscalc.Sex}
+          required
           onClick={this.handleClick}
         />
         <ButtonGroup
@@ -76,32 +77,46 @@ class Calculator extends React.Component {
             'Non-Hispanic Black': msscalc.RaceEthnicity.Black,
             'Non-Hispanic White': msscalc.RaceEthnicity.White
           }}
+          required
           onClick={this.handleClick}
         />
 
         <h3>Blood pressure</h3>
         <div className="form-group">
           <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
-          <input className="form-control" name="sbp" type="number" min="0" step="any" value={sbp} onChange={this.handleChange}></input>
+          <input className="form-control" name="sbp" type="number"
+            min="0" max="400" required step="any" value={sbp}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
         </div>
         <div className="form-group">
           <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
-          <input className="form-control" name="glucose" type="number" min="0" step="any" value={glucose} onChange={this.handleChange}></input>
+          <input className="form-control" name="glucose" type="number"
+            min="0" max="500" step="any" required value={glucose}
+            placeholder="Ex: 75"
+            onChange={this.handleChange}></input>
         </div>
 
         <h3>Measurements</h3>
         <div className="form-group">
           <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
-          <input className="form-control" name="triglyceride" type="number" min="0" step="any" value={triglyceride} onChange={this.handleChange}></input>
+          <input className="form-control" name="triglyceride" type="number"
+            min="0" max="600" step="any" required value={triglyceride}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
         </div>
         <div className="form-group">
           <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
-          <input className="form-control" name="hdl" type="number" min="0" step="any" value={hdl} onChange={this.handleChange}></input>
+          <input className="form-control" name="hdl" type="number" required
+            min="0" max="100" step="any" value={hdl}
+            placeholder="Ex: 50"
+            onChange={this.handleChange}></input>
         </div>
 
         <div className="form-group">
           <label htmlFor="weight">Weight</label>
           <Measurement name="weight" value={weight} unit={weightUnit}
+            min="0" max="500" required
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
               lbs: 'Pounds (lbs)',
@@ -111,6 +126,7 @@ class Calculator extends React.Component {
 
           <label htmlFor="height">Height</label>
           <Measurement name="height" value={height} unit={heightUnit}
+            min="0" max="250" required
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
               in: 'Inches (in)',
@@ -123,6 +139,7 @@ class Calculator extends React.Component {
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
             <Measurement name="waist" value={waist} unit={waistUnit}
+              min="0" max="200"
               onValueChange={this.handleChange} onUnitChange={this.handleChange}
               units={{
                 in: 'Inches (in)',
@@ -136,23 +153,18 @@ class Calculator extends React.Component {
         {bmiadult && (
           <div className="form-group">
             <label htmlFor="bmiadult"> BMI </label>
-            <input className="form-control" name="bmiadult" value={bmiadult} readOnly />
+            <input className="form-control" name="bmiadult" value={bmiadult.toFixed(3)} readOnly />
           </div>
         )}
 
-        {adolescent && (
+        {adolescent && bmiz && (
           <div className="form-group">
             <label htmlFor="bmiz"> BMI Z-Score </label>
-            <input className="form-control" name="bmiz" value={bmiz} readOnly />
+            <input className="form-control" name="bmiz" value={bmiz.toFixed(3)} readOnly />
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary float-right"
-          disabled={
-            !(sex && race && sbp && glucose && hdl && triglyceride) ||
-            !((weight && height) || waist)
-          }
-        >
+        <button type="submit" className="btn btn-primary float-right">
           Calculate
         </button>
 
@@ -160,15 +172,33 @@ class Calculator extends React.Component {
           <div className="result">
             <h2>Results</h2>
             {result.mets_z_bmi && (
-              <p>Z-Score based on Body Mass Index
+              <p>MetS Z-Score based on Body Mass Index
                 <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
               </p>
             )}
+            {result.mets_z_bmi && (
+              <p>MetS Percentile based on Body Mass Index
+                <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
+              </p>
+            )}
+
             {result.mets_z_wc && (
-              <p>Z-Score based on Waistline
+              <p>MetS Z-Score based on Waistline
                 <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
               </p>
             )}
+            {result.mets_z_wc && (
+              <p>MetS Percentile based on Waistline
+                <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
+              </p>
+            )}
+
+            {bmiz && (
+              <p>BMI Percentile
+                <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
+              </p>
+            )}
+
           </div>
         )}
 
@@ -182,7 +212,22 @@ class Calculator extends React.Component {
   }
 
   handleChange (event) {
-    this.setState({ [event.target.name]: event.target.value }, this.afterUpdate)
+    event.persist()
+
+    this.setState({ [event.target.name]: event.target.value }, () => {
+      this.afterUpdate()
+
+      if (!event.target.checkValidity) {
+        return
+      }
+
+      if (!event.target.checkValidity()) {
+        event.target.classList.add('is-invalid')
+      } else {
+        event.target.classList.remove('is-invalid')
+      }
+      event.target.reportValidity()
+    })
   }
 
   handleClick (event) {
@@ -202,7 +247,16 @@ class Calculator extends React.Component {
       return
     }
 
-    this.setState({ [input.name]: input.value }, this.afterUpdate)
+    this.setState({ [input.name]: input.value }, () => {
+      this.afterUpdate()
+
+      if (!input.checkValidity()) {
+        input.classList.add('is-invalid')
+      } else {
+        input.classList.remove('is-invalid')
+      }
+      input.reportValidity()
+    })
   }
 
   handleSubmit (event) {
@@ -210,8 +264,13 @@ class Calculator extends React.Component {
 
     let {
       age, bmiadult, sex, race, hdl, sbp, triglyceride, glucose, waist, waistUnit,
-      birth, appointment, bmiz
+      birth, appointment, bmiz, weight, height
     } = this.state
+
+    if (!(sex && race && sbp && glucose && hdl && triglyceride) || !((weight && height) || waist)) {
+      alert('Please fill out the required fields.')
+      return
+    }
 
     const result = msscalc.CalculateMSS({
       age: age ? moment(appointment).diff(moment(birth), 'years') : 25,
@@ -319,8 +378,8 @@ function kilograms (mass, units) {
       return mass
 
     case 'lbs':
-    // https://www.google.com/search?q=pounds+to+kg
-      return mass / 2.205
+      // See https://www.ngs.noaa.gov/PUBS_LIB/FedRegister/FRdoc59-5442.pdf
+      return mass * 0.45359237
   }
 
   console.error("units must be 'kg' or 'lbs'; got:", units)
@@ -328,7 +387,7 @@ function kilograms (mass, units) {
 }
 
 function ButtonGroup (props) {
-  const { name, label, options, value, onClick, onKeyPress } = props
+  const { name, label, options, value, required, onClick, onKeyPress } = props
 
   if (!options || options.length === 0) {
     return null
@@ -340,6 +399,7 @@ function ButtonGroup (props) {
       <div className="input-group btn-group btn-group-toggle" data-toggle="buttons">
         {Object.keys(options).map(label => (
           <Button key={label}
+            required={required}
             group={name} label={label} value={options[label]}
             pressed={value === options[label]}
             onClick={onClick} onKeyPress={onKeyPress}
@@ -351,7 +411,7 @@ function ButtonGroup (props) {
 }
 
 function Button (props) {
-  const { group, label, pressed, value, onClick, onKeyPress } = props
+  const { group, label, pressed, value, onClick, onKeyPress, required = false } = props
 
   return (
     <label className= {`btn btn-light ${pressed ? 'active' : ''}`}
@@ -360,19 +420,20 @@ function Button (props) {
       aria-pressed={pressed}
       onClick={onClick} onKeyPress={onKeyPress}
     >
-      <input type="radio" name={group} value={value} autoComplete="off" /> {label}
+      <input type="radio" name={group} value={value} autoComplete="off" required={required} /> {label}
     </label>
   )
 }
 
 function Measurement (props) {
   const {
-    name, unit, units, value, onValueChange, onUnitChange
+    name, unit, units, value, onValueChange, onUnitChange, min, max, required
   } = props
 
   return (
     <div className="input-group">
-      <input className="form-control" name={name} type="number" min="0" step="any" value={value} onChange={onValueChange}></input>
+      <input className="form-control" name={name} type="number" min={min} max={max}
+        required={required} step="any" value={value} onChange={onValueChange}></input>
       {units && (
         <div className="input-group-append">
           <select className="custom-select" value={unit} name={`${name}Unit`} onChange={onUnitChange}>

@@ -5,7 +5,7 @@ Metabolic Syndrome Severity Calculator
 
 Calculates someone's Metabolic Syndrome Severity Score.
 
- * Website: https://metscalc.github.io/
+ * Website: https://metscalc.org/
  * Source code: https://github.com/metscalc/metscalc
 
 

@@ -103,8 +103,16 @@ function CalculateMSS (args) {
   }
 }
 
+// Percentile calculates the percentile from the specified z-score, z. This can
+// be used for both the BMI and MetS percenitles.
+// https://github.com/travm/ZMI/blob/5340e9d194cc716dd4cf9ff7b5ae479e915798a5/app/js/zmi.js +194
+function Percentile (z) {
+  return 100 * (1 / (1 + Math.exp(-0.07056 * Math.pow(z, 3) - (1.5976 * z))))
+}
+
 module.exports = {
   CalculateMSS,
+  Percentile,
   RaceEthnicity,
   Sex
 }
