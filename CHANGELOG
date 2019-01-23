@@ -1,7 +1,11 @@
 Changelog
 =========
 
-[0.1.0-alpha2]
+[0.1.0-alpha3] 2019-01-23
+
+ * Improve documentation
+
+[0.1.0-alpha2] 2019-01-23
 
  * Add max bound and check validity of fields
  * Enable Calculate always and report errors on click
