@@ -82,26 +82,39 @@ class Calculator extends React.Component {
         <h3>Blood pressure</h3>
         <div className="form-group">
           <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
-          <input className="form-control" name="sbp" type="number" min="0" step="any" value={sbp} onChange={this.handleChange}></input>
+          <input className="form-control" name="sbp" type="number"
+            min="0" max="400" step="any" value={sbp}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
         </div>
         <div className="form-group">
           <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
-          <input className="form-control" name="glucose" type="number" min="0" step="any" value={glucose} onChange={this.handleChange}></input>
+          <input className="form-control" name="glucose" type="number"
+            min="0" max="500" step="any" value={glucose}
+            placeholder="Ex: 75"
+            onChange={this.handleChange}></input>
         </div>
 
         <h3>Measurements</h3>
         <div className="form-group">
           <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
-          <input className="form-control" name="triglyceride" type="number" min="0" step="any" value={triglyceride} onChange={this.handleChange}></input>
+          <input className="form-control" name="triglyceride" type="number"
+            min="0" max="600" step="any" value={triglyceride}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
         </div>
         <div className="form-group">
           <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
-          <input className="form-control" name="hdl" type="number" min="0" step="any" value={hdl} onChange={this.handleChange}></input>
+          <input className="form-control" name="hdl" type="number"
+            min="0" max="100" step="any" value={hdl}
+            placeholder="Ex: 50"
+            onChange={this.handleChange}></input>
         </div>
 
         <div className="form-group">
           <label htmlFor="weight">Weight</label>
           <Measurement name="weight" value={weight} unit={weightUnit}
+            min="0" max="500"
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
               lbs: 'Pounds (lbs)',
@@ -111,6 +124,7 @@ class Calculator extends React.Component {
 
           <label htmlFor="height">Height</label>
           <Measurement name="height" value={height} unit={heightUnit}
+            min="0" max="250"
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
               in: 'Inches (in)',
@@ -123,6 +137,7 @@ class Calculator extends React.Component {
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
             <Measurement name="waist" value={waist} unit={waistUnit}
+              min="0" max="200"
               onValueChange={this.handleChange} onUnitChange={this.handleChange}
               units={{
                 in: 'Inches (in)',
@@ -200,7 +215,22 @@ class Calculator extends React.Component {
   }
 
   handleChange (event) {
-    this.setState({ [event.target.name]: event.target.value }, this.afterUpdate)
+    event.persist()
+
+    this.setState({ [event.target.name]: event.target.value }, function () {
+      this.afterUpdate()
+
+      if (!event.target.checkValidity) {
+        return
+      }
+
+      if (!event.target.checkValidity()) {
+        event.target.classList.add('is-invalid')
+      } else {
+        event.target.classList.remove('is-invalid')
+      }
+      event.target.reportValidity()
+    })
   }
 
   handleClick (event) {
@@ -385,12 +415,12 @@ function Button (props) {
 
 function Measurement (props) {
   const {
-    name, unit, units, value, onValueChange, onUnitChange
+    name, unit, units, value, onValueChange, onUnitChange, min, max
   } = props
 
   return (
     <div className="input-group">
-      <input className="form-control" name={name} type="number" min="0" step="any" value={value} onChange={onValueChange}></input>
+      <input className="form-control" name={name} type="number" min={min} max={max} step="any" value={value} onChange={onValueChange}></input>
       {units && (
         <div className="input-group-append">
           <select className="custom-select" value={unit} name={`${name}Unit`} onChange={onUnitChange}>
