@@ -216,17 +216,7 @@ class Calculator extends React.Component {
 
     this.setState({ [event.target.name]: event.target.value }, () => {
       this.afterUpdate()
-
-      if (!event.target.checkValidity) {
-        return
-      }
-
-      if (!event.target.checkValidity()) {
-        event.target.classList.add('is-invalid')
-      } else {
-        event.target.classList.remove('is-invalid')
-      }
-      event.target.reportValidity()
+      runValidator(event.target)
     })
   }
 
@@ -249,13 +239,7 @@ class Calculator extends React.Component {
 
     this.setState({ [input.name]: input.value }, () => {
       this.afterUpdate()
-
-      if (!input.checkValidity()) {
-        input.classList.add('is-invalid')
-      } else {
-        input.classList.remove('is-invalid')
-      }
-      input.reportValidity()
+      runValidator(input)
     })
   }
 
@@ -384,6 +368,19 @@ function kilograms (mass, units) {
 
   console.error("units must be 'kg' or 'lbs'; got:", units)
   return null
+}
+
+function runValidator (target) {
+  if (!target.checkValidity || !target.reportValidity) {
+    return
+  }
+
+  if (!target.checkValidity()) {
+    target.classList.add('is-invalid')
+  } else {
+    target.classList.remove('is-invalid')
+  }
+  target.reportValidity()
 }
 
 function ButtonGroup (props) {

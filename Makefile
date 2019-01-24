@@ -9,7 +9,7 @@ www:
 www/app.js: src/*.js
 	./node_modules/.bin/browserify \
 		--ignore react --ignore react-dom --ignore moment \
-		-t [ babelify --presets [ @babel/preset-react ] ] \
+		-t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] \
 		src/web.js >www/app.js
 
 www/%.html: src/%.html
