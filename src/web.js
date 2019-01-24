@@ -43,7 +43,7 @@ class Calculator extends React.Component {
       glucose, waist, waistUnit, bmiadult, bmiz, birth, appointment, result
     } = this.state
 
-    const adolescent = age && age < 20
+    const adolescent = age !== null && age < 20
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -60,10 +60,12 @@ class Calculator extends React.Component {
             <input className="form-control" type="date" name="appointment" value={appointment} onChange={this.handleChange}></input>
           </div>
         )}
-        {age && (
+        {birth && appointment && (
           <div className="form-group">
             <label htmlFor="age">Age at Appointment (years)</label>
-            <input className="form-control" name="age" value={age || ''} readOnly />
+            <input className="form-control" name="age" type="number" readOnly
+              value={age === null ? '' : age}
+            />
           </div>
         )}
 
@@ -159,9 +161,11 @@ class Calculator extends React.Component {
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary float-right">
+        {!result && (
+          <button type="submit" className="btn btn-primary float-right">
           Calculate
-        </button>
+          </button>
+        )}
 
         {result && (
           <div className="result">
@@ -265,6 +269,11 @@ class Calculator extends React.Component {
       return
     }
 
+    if (age !== null && age < 2) {
+      alert('The age at appointment time must be at least 2 years old.')
+      return
+    }
+
     const result = msscalc.CalculateMSS({
       age: age ? moment(appointment).diff(moment(birth), 'years') : 25,
       sex,
@@ -275,7 +284,7 @@ class Calculator extends React.Component {
       triglyceride,
       glucose,
       bmiZScore: bmiz,
-      waist: centimeters(waist, waistUnit) || null
+      waist: waist && (age === null || age > 20) ? centimeters(waist, waistUnit) || null : null
     })
 
     this.setState({ result })
@@ -298,7 +307,7 @@ class Calculator extends React.Component {
 
       bmiadult = bmi.BMIAdult(weightKG, heightMeters)
 
-      const adolescent = age && age < 20
+      const adolescent = age !== null && age >= 2 && age < 20
       if (adolescent && sex) {
         const agemos = moment(appointment).diff(moment(birth), 'months')
         const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
@@ -309,7 +318,8 @@ class Calculator extends React.Component {
     this.setState({
       age,
       bmiz,
-      bmiadult: bmiadult
+      bmiadult: bmiadult,
+      result: null
     })
   }
 }
