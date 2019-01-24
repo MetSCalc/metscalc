@@ -50,7 +50,9 @@ class Calculator extends React.Component {
         <h3>Age</h3>
         <div className="form-group">
           <label htmlFor="birth">Birthdate <em>(if younger than 20 years old)</em></label>
-          <input className="form-control" type="date" name="birth" value={birth} onChange={this.handleChange}></input>
+          <input className="form-control" type="date" name="birth" value={birth}
+            placeholder="Ex. 1984-12-23"
+            onChange={this.handleChange}></input>
         </div>
         {birth && (
           <div className="form-group">
@@ -435,7 +437,7 @@ function Measurement (props) {
   } = props
 
   return (
-    <div className="input-group">
+    <div className="Measurement input-group">
       <input className="form-control" name={name} type="number" min={min} max={max}
         required={required} step="any" value={value} onChange={onValueChange}></input>
       {units && (
@@ -452,3 +454,20 @@ function Measurement (props) {
 }
 
 ReactDOM.render(<Calculator />, document.getElementById('calculator'))
+
+function resizeBtnGroup () {
+  const groups = document.getElementsByClassName('btn-group')
+
+  const smallWindow = window.innerWidth < 500
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i]
+    if (smallWindow) {
+      group.classList.add('btn-group-vertical')
+    } else {
+      group.classList.remove('btn-group-vertical')
+    }
+  }
+}
+
+window.onresize = resizeBtnGroup
+resizeBtnGroup()
