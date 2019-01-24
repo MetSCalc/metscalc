@@ -18,6 +18,7 @@ h1.title {
     display: block;
     font-size: 2em;
     font-weight: bold;
+    padding-left: 0.5em;
 }
 
 @media screen and (max-width: 399px) {

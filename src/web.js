@@ -157,13 +157,6 @@ class Calculator extends React.Component {
           </div>
         )}
 
-        {adolescent && bmiz && (
-          <div className="form-group">
-            <label htmlFor="bmiz"> BMI Z-Score </label>
-            <input className="form-control" name="bmiz" value={bmiz.toFixed(3)} readOnly />
-          </div>
-        )}
-
         <button type="submit" className="btn btn-primary float-right">
           Calculate
         </button>
@@ -171,34 +164,48 @@ class Calculator extends React.Component {
         {result && (
           <div className="result">
             <h2>Results</h2>
-            {result.mets_z_bmi && (
-              <p>MetS Z-Score based on Body Mass Index
-                <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
-              </p>
-            )}
-            {result.mets_z_bmi && (
-              <p>MetS Percentile based on Body Mass Index
-                <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
-              </p>
-            )}
 
-            {result.mets_z_wc && (
-              <p>MetS Z-Score based on Waistline
-                <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
-              </p>
-            )}
-            {result.mets_z_wc && (
-              <p>MetS Percentile based on Waistline
-                <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
-              </p>
-            )}
+            <div className="row">
+              {adolescent && bmiz && (
+                <div className="col-sm">
+                  <p>BMI Z-Score for Adolescents
+                    <span className="amount">{bmiz.toFixed(3)}%</span>
+                  </p>
+                  <p>BMI Percentile for Adolescents
+                    <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
+                  </p>
+                </div>
+              )}
 
-            {bmiz && (
-              <p>BMI Percentile
-                <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
-              </p>
-            )}
+              <div className="col-sm">
+                {result.mets_z_bmi && (
+                  <p>MetS Z-Score based on Body Mass Index
+                    <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
+                  </p>
+                )}
+                {result.mets_z_bmi && (
+                  <p>MetS Percentile based on Body Mass Index
+                    <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
+                  </p>
+                )}
+              </div>
 
+              {result.mets_z_wc && (
+                <div className="col-sm">
+                  {result.mets_z_wc && (
+                    <p>MetS Z-Score based on Waistline
+                      <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
+                    </p>
+                  )}
+                  {result.mets_z_wc && (
+                    <p>MetS Percentile based on Waistline
+                      <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+            </div>
           </div>
         )}
 
