@@ -47,7 +47,7 @@ class Calculator extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <h3>Age</h3>
+        <h3>Demographics</h3>
         <div className="form-group">
           <label htmlFor="birth">Birthdate <em>(if younger than 20 years old)</em></label>
           <input className="form-control" type="date" name="birth" value={birth}
@@ -69,76 +69,44 @@ class Calculator extends React.Component {
           </div>
         )}
 
-        <h3>Demographics</h3>
         <ButtonGroup
-          name="sex" label="Sex" value={sex} options={msscalc.Sex}
-          required
+          name="sex" label="Sex" value={sex} required options={msscalc.Sex}
           onClick={this.handleClick}
         />
+
         <ButtonGroup
-          name="race" label="Race and Ethnicity" value={race} options={{
+          name="race" label="Race and Ethnicity" value={race} required
+          options={{
             'Hispanic': msscalc.RaceEthnicity.Hispanic,
             'Non-Hispanic Black': msscalc.RaceEthnicity.Black,
             'Non-Hispanic White': msscalc.RaceEthnicity.White
           }}
-          required
           onClick={this.handleClick}
         />
 
-        <h3>Blood pressure</h3>
-        <div className="form-group">
-          <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
-          <input className="form-control" name="sbp" type="number"
-            min="0" max="400" required step="any" value={sbp}
-            placeholder="Ex: 120"
-            onChange={this.handleChange}></input>
-        </div>
-        <div className="form-group">
-          <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
-          <input className="form-control" name="glucose" type="number"
-            min="0" max="500" step="any" required value={glucose}
-            placeholder="Ex: 75"
-            onChange={this.handleChange}></input>
-        </div>
-
         <h3>Measurements</h3>
         <div className="form-group">
-          <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
-          <input className="form-control" name="triglyceride" type="number"
-            min="0" max="600" step="any" required value={triglyceride}
-            placeholder="Ex: 120"
-            onChange={this.handleChange}></input>
-        </div>
-        <div className="form-group">
-          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
-          <input className="form-control" name="hdl" type="number" required
-            min="0" max="100" step="any" value={hdl}
-            placeholder="Ex: 50"
-            onChange={this.handleChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="weight">Weight</label>
-          <Measurement name="weight" value={weight} unit={weightUnit}
-            min="0" max="500" required
-            onValueChange={this.handleChange} onUnitChange={this.handleChange}
-            units={{
-              lbs: 'Pounds (lbs)',
-              kg: 'Kilograms (kg)'
-            }}
-          />
-
           <label htmlFor="height">Height</label>
           <Measurement name="height" value={height} unit={heightUnit}
             min="0" max="250" required
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
-              in: 'Inches (in)',
               cm: 'Centimeters (cm)',
-              m: 'Meters (m)'
+              in: 'Inches (in)'
             }}
           />
         </div>
+
+        <label htmlFor="weight">Weight</label>
+        <Measurement name="weight" value={weight} unit={weightUnit}
+          min="0" max="500" required
+          onValueChange={this.handleChange} onUnitChange={this.handleChange}
+          units={{
+            kg: 'Kilograms (kg)',
+            lbs: 'Pounds (lbs)'
+          }}
+        />
+
         {!adolescent && (
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
@@ -146,9 +114,8 @@ class Calculator extends React.Component {
               min="0" max="200"
               onValueChange={this.handleChange} onUnitChange={this.handleChange}
               units={{
-                in: 'Inches (in)',
                 cm: 'Centimeters (cm)',
-                m: 'Meters (m)'
+                in: 'Inches (in)'
               }}
             />
           </div>
@@ -160,6 +127,39 @@ class Calculator extends React.Component {
             <input className="form-control" name="bmiadult" value={bmiadult.toFixed(3)} readOnly />
           </div>
         )}
+
+        <div className="form-group">
+          <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
+          <input className="form-control" name="sbp" type="number"
+            min="0" max="400" required step="any" value={sbp}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
+        </div>
+
+        <h3>Lab Values</h3>
+        <div className="form-group">
+          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
+          <input className="form-control" name="hdl" type="number" required
+            min="0" max="100" step="any" value={hdl}
+            placeholder="Ex: 50"
+            onChange={this.handleChange}></input>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
+          <input className="form-control" name="triglyceride" type="number"
+            min="0" max="600" step="any" required value={triglyceride}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
+          <input className="form-control" name="glucose" type="number"
+            min="0" max="500" step="any" required value={glucose}
+            placeholder="Ex: 75"
+            onChange={this.handleChange}></input>
+        </div>
 
         {!result && (
           <button type="submit" className="btn btn-primary float-right">
