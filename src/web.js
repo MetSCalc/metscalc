@@ -191,7 +191,7 @@ class Calculator extends React.Component {
               {adolescent && bmiz && (
                 <div className="col-sm">
                   <p>BMI Z-Score for Adolescents
-                    <span className="amount">{bmiz.toFixed(3)}%</span>
+                    <span className="amount">{bmiz.toFixed(3)}</span>
                   </p>
                   <p>BMI Percentile for Adolescents
                     <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
