@@ -1,3 +1,19 @@
+/*
+   Copyright 2019 University of Florida
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 var React = window.React || require('react')
 var ReactDOM = window.ReactDOM || require('react-dom')
 var moment = window.moment || require('moment')
@@ -43,14 +59,16 @@ class Calculator extends React.Component {
       glucose, waist, waistUnit, bmiadult, bmiz, birth, appointment, result
     } = this.state
 
-    const adolescent = age && age < 20
+    const adolescent = age !== null && age < 20
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <h3>Age</h3>
+        <h3>Demographics</h3>
         <div className="form-group">
           <label htmlFor="birth">Birthdate <em>(if younger than 20 years old)</em></label>
-          <input className="form-control" type="date" name="birth" value={birth} onChange={this.handleChange}></input>
+          <input className="form-control" type="date" name="birth" value={birth}
+            placeholder="Ex. 1984-12-23"
+            onChange={this.handleChange}></input>
         </div>
         {birth && (
           <div className="form-group">
@@ -58,83 +76,53 @@ class Calculator extends React.Component {
             <input className="form-control" type="date" name="appointment" value={appointment} onChange={this.handleChange}></input>
           </div>
         )}
-        {age && (
+        {birth && appointment && (
           <div className="form-group">
             <label htmlFor="age">Age at Appointment (years)</label>
-            <input className="form-control" name="age" value={age || ''} readOnly />
+            <input className="form-control" name="age" type="number" readOnly
+              value={age === null ? '' : age}
+            />
           </div>
         )}
 
-        <h3>Demographics</h3>
         <ButtonGroup
-          name="sex" label="Sex" value={sex} options={msscalc.Sex}
-          required
+          name="sex" label="Sex" value={sex} required options={msscalc.Sex}
           onClick={this.handleClick}
         />
+
         <ButtonGroup
-          name="race" label="Race and Ethnicity" value={race} options={{
+          name="race" label="Race and Ethnicity" value={race} required
+          options={{
             'Hispanic': msscalc.RaceEthnicity.Hispanic,
             'Non-Hispanic Black': msscalc.RaceEthnicity.Black,
             'Non-Hispanic White': msscalc.RaceEthnicity.White
           }}
-          required
           onClick={this.handleClick}
         />
 
-        <h3>Blood pressure</h3>
-        <div className="form-group">
-          <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
-          <input className="form-control" name="sbp" type="number"
-            min="0" max="400" required step="any" value={sbp}
-            placeholder="Ex: 120"
-            onChange={this.handleChange}></input>
-        </div>
-        <div className="form-group">
-          <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
-          <input className="form-control" name="glucose" type="number"
-            min="0" max="500" step="any" required value={glucose}
-            placeholder="Ex: 75"
-            onChange={this.handleChange}></input>
-        </div>
-
         <h3>Measurements</h3>
         <div className="form-group">
-          <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
-          <input className="form-control" name="triglyceride" type="number"
-            min="0" max="600" step="any" required value={triglyceride}
-            placeholder="Ex: 120"
-            onChange={this.handleChange}></input>
-        </div>
-        <div className="form-group">
-          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
-          <input className="form-control" name="hdl" type="number" required
-            min="0" max="100" step="any" value={hdl}
-            placeholder="Ex: 50"
-            onChange={this.handleChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="weight">Weight</label>
-          <Measurement name="weight" value={weight} unit={weightUnit}
-            min="0" max="500" required
-            onValueChange={this.handleChange} onUnitChange={this.handleChange}
-            units={{
-              lbs: 'Pounds (lbs)',
-              kg: 'Kilograms (kg)'
-            }}
-          />
-
           <label htmlFor="height">Height</label>
           <Measurement name="height" value={height} unit={heightUnit}
             min="0" max="250" required
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
-              in: 'Inches (in)',
               cm: 'Centimeters (cm)',
-              m: 'Meters (m)'
+              in: 'Inches (in)'
             }}
           />
         </div>
+
+        <label htmlFor="weight">Weight</label>
+        <Measurement name="weight" value={weight} unit={weightUnit}
+          min="0" max="500" required
+          onValueChange={this.handleChange} onUnitChange={this.handleChange}
+          units={{
+            kg: 'Kilograms (kg)',
+            lbs: 'Pounds (lbs)'
+          }}
+        />
+
         {!adolescent && (
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
@@ -142,9 +130,8 @@ class Calculator extends React.Component {
               min="0" max="200"
               onValueChange={this.handleChange} onUnitChange={this.handleChange}
               units={{
-                in: 'Inches (in)',
                 cm: 'Centimeters (cm)',
-                m: 'Meters (m)'
+                in: 'Inches (in)'
               }}
             />
           </div>
@@ -157,48 +144,90 @@ class Calculator extends React.Component {
           </div>
         )}
 
-        {adolescent && bmiz && (
-          <div className="form-group">
-            <label htmlFor="bmiz"> BMI Z-Score </label>
-            <input className="form-control" name="bmiz" value={bmiz.toFixed(3)} readOnly />
-          </div>
-        )}
+        <div className="form-group">
+          <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
+          <input className="form-control" name="sbp" type="number"
+            min="0" max="400" required step="any" value={sbp}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
+        </div>
 
-        <button type="submit" className="btn btn-primary float-right">
+        <h3>Lab Values</h3>
+        <div className="form-group">
+          <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
+          <input className="form-control" name="hdl" type="number" required
+            min="0" max="100" step="any" value={hdl}
+            placeholder="Ex: 50"
+            onChange={this.handleChange}></input>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
+          <input className="form-control" name="triglyceride" type="number"
+            min="0" max="600" step="any" required value={triglyceride}
+            placeholder="Ex: 120"
+            onChange={this.handleChange}></input>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
+          <input className="form-control" name="glucose" type="number"
+            min="0" max="500" step="any" required value={glucose}
+            placeholder="Ex: 75"
+            onChange={this.handleChange}></input>
+        </div>
+
+        {!result && (
+          <button type="submit" className="btn btn-primary float-right">
           Calculate
-        </button>
+          </button>
+        )}
 
         {result && (
           <div className="result">
             <h2>Results</h2>
-            {result.mets_z_bmi && (
-              <p>MetS Z-Score based on Body Mass Index
-                <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
-              </p>
-            )}
-            {result.mets_z_bmi && (
-              <p>MetS Percentile based on Body Mass Index
-                <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
-              </p>
-            )}
 
-            {result.mets_z_wc && (
-              <p>MetS Z-Score based on Waistline
-                <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
-              </p>
-            )}
-            {result.mets_z_wc && (
-              <p>MetS Percentile based on Waistline
-                <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
-              </p>
-            )}
+            <div className="row">
+              {adolescent && bmiz && (
+                <div className="col-sm">
+                  <p>BMI Z-Score for Adolescents
+                    <span className="amount">{bmiz.toFixed(3)}%</span>
+                  </p>
+                  <p>BMI Percentile for Adolescents
+                    <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
+                  </p>
+                </div>
+              )}
 
-            {bmiz && (
-              <p>BMI Percentile
-                <span className="amount">{msscalc.Percentile(bmiz).toFixed(2)}%</span>
-              </p>
-            )}
+              <div className="col-sm">
+                {result.mets_z_bmi && (
+                  <p>MetS Z-Score based on Body Mass Index
+                    <span className="amount">{result.mets_z_bmi.toFixed(3)}</span>
+                  </p>
+                )}
+                {result.mets_z_bmi && (
+                  <p>MetS Percentile based on Body Mass Index
+                    <span className="amount">{msscalc.Percentile(result.mets_z_bmi).toFixed(2)}%</span>
+                  </p>
+                )}
+              </div>
 
+              {result.mets_z_wc && (
+                <div className="col-sm">
+                  {result.mets_z_wc && (
+                    <p>MetS Z-Score based on Waistline
+                      <span className="amount">{result.mets_z_wc.toFixed(3)}</span>
+                    </p>
+                  )}
+                  {result.mets_z_wc && (
+                    <p>MetS Percentile based on Waistline
+                      <span className="amount">{msscalc.Percentile(result.mets_z_wc).toFixed(2)}%</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+            </div>
           </div>
         )}
 
@@ -216,17 +245,7 @@ class Calculator extends React.Component {
 
     this.setState({ [event.target.name]: event.target.value }, () => {
       this.afterUpdate()
-
-      if (!event.target.checkValidity) {
-        return
-      }
-
-      if (!event.target.checkValidity()) {
-        event.target.classList.add('is-invalid')
-      } else {
-        event.target.classList.remove('is-invalid')
-      }
-      event.target.reportValidity()
+      runValidator(event.target)
     })
   }
 
@@ -249,13 +268,7 @@ class Calculator extends React.Component {
 
     this.setState({ [input.name]: input.value }, () => {
       this.afterUpdate()
-
-      if (!input.checkValidity()) {
-        input.classList.add('is-invalid')
-      } else {
-        input.classList.remove('is-invalid')
-      }
-      input.reportValidity()
+      runValidator(input)
     })
   }
 
@@ -272,6 +285,11 @@ class Calculator extends React.Component {
       return
     }
 
+    if (age !== null && age < 2) {
+      alert('The age at appointment time must be at least 2 years old.')
+      return
+    }
+
     const result = msscalc.CalculateMSS({
       age: age ? moment(appointment).diff(moment(birth), 'years') : 25,
       sex,
@@ -282,7 +300,7 @@ class Calculator extends React.Component {
       triglyceride,
       glucose,
       bmiZScore: bmiz,
-      waist: centimeters(waist, waistUnit) || null
+      waist: waist && (age === null || age > 20) ? centimeters(waist, waistUnit) || null : null
     })
 
     this.setState({ result })
@@ -305,7 +323,7 @@ class Calculator extends React.Component {
 
       bmiadult = bmi.BMIAdult(weightKG, heightMeters)
 
-      const adolescent = age && age < 20
+      const adolescent = age !== null && age >= 2 && age < 20
       if (adolescent && sex) {
         const agemos = moment(appointment).diff(moment(birth), 'months')
         const sexord = sex === 'MALE' ? bmi.Sex.Male : bmi.Sex.Female
@@ -316,7 +334,8 @@ class Calculator extends React.Component {
     this.setState({
       age,
       bmiz,
-      bmiadult: bmiadult
+      bmiadult: bmiadult,
+      result: null
     })
   }
 }
@@ -386,6 +405,19 @@ function kilograms (mass, units) {
   return null
 }
 
+function runValidator (target) {
+  if (!target.checkValidity || !target.reportValidity) {
+    return
+  }
+
+  if (!target.checkValidity()) {
+    target.classList.add('is-invalid')
+  } else {
+    target.classList.remove('is-invalid')
+  }
+  target.reportValidity()
+}
+
 function ButtonGroup (props) {
   const { name, label, options, value, required, onClick, onKeyPress } = props
 
@@ -431,7 +463,7 @@ function Measurement (props) {
   } = props
 
   return (
-    <div className="input-group">
+    <div className="Measurement input-group">
       <input className="form-control" name={name} type="number" min={min} max={max}
         required={required} step="any" value={value} onChange={onValueChange}></input>
       {units && (
@@ -448,3 +480,20 @@ function Measurement (props) {
 }
 
 ReactDOM.render(<Calculator />, document.getElementById('calculator'))
+
+function resizeBtnGroup () {
+  const groups = document.getElementsByClassName('btn-group')
+
+  const smallWindow = window.innerWidth < 500
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i]
+    if (smallWindow) {
+      group.classList.add('btn-group-vertical')
+    } else {
+      group.classList.remove('btn-group-vertical')
+    }
+  }
+}
+
+window.onresize = resizeBtnGroup
+resizeBtnGroup()
