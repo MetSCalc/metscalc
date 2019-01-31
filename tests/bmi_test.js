@@ -39,7 +39,3 @@ test('test boy 120.1 months', function (t) {
   t.end()
 })
 
-test('test girl 24 months', function (t) {
-  t.fail('TODO: write this edge case 24 months exactly')
-  t.end()
-})

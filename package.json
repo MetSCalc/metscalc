@@ -1,4 +1,12 @@
 {
+  "name": "metscalc",
+  "version": "1.0.0",
+  "description": "Metabolic Syndrome Severity Calculator",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.3.1",
@@ -16,5 +24,17 @@
     "tape": "^4.9.1",
     "uglifyify": "^5.0.1"
   },
-  "dependencies": {}
+  "scripts": {
+    "test": "./node_modules/tape/bin/tape tests/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metscalc/metscalc.git"
+  },
+  "author": "Taeber Rapczak <taeber@ufl.edu>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/metscalc/metscalc/issues"
+  },
+  "homepage": "https://github.com/metscalc/metscalc#readme"
 }
