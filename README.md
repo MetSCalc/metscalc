@@ -45,7 +45,7 @@ Gurka, M. J., Lilly, C. L., Oliver, M. N., & DeBoer, M. D. (2014). An examinatio
 
 ### Cite software
 
-Gurka, M. J., DeBoer, M., Filipp, S., Khan, J., Rapczak, T. J., Braun, N. D., Hanson, K. S., & Barnes, C. P. (2019). MetS Calc: Metabolic Syndrome Severity Calculator. doi: 10.5281/zenodo.2542213
+Gurka, M. J., DeBoer, M. D., Filipp, S. L., Khan, J. Z., Rapczak, T. J., Braun, N. D., Hanson, K. S., & Barnes, C. P. (2019). MetS Calc: Metabolic Syndrome Severity Calculator. doi: 10.5281/zenodo.2542213
 
 
 Quickstart
