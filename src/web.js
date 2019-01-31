@@ -104,7 +104,7 @@ class Calculator extends React.Component {
         <div className="form-group">
           <label htmlFor="height">Height</label>
           <Measurement name="height" value={height} unit={heightUnit}
-            min="0" max="250" required
+            min="0" required
             onValueChange={this.handleChange} onUnitChange={this.handleChange}
             units={{
               cm: 'Centimeters (cm)',
@@ -115,7 +115,7 @@ class Calculator extends React.Component {
 
         <label htmlFor="weight">Weight</label>
         <Measurement name="weight" value={weight} unit={weightUnit}
-          min="0" max="500" required
+          min="0" required
           onValueChange={this.handleChange} onUnitChange={this.handleChange}
           units={{
             kg: 'Kilograms (kg)',
@@ -127,7 +127,7 @@ class Calculator extends React.Component {
           <div className="form-group">
             <label htmlFor="waist">Waist Circumference <em>(if available)</em></label>
             <Measurement name="waist" value={waist} unit={waistUnit}
-              min="0" max="200"
+              min="0"
               onValueChange={this.handleChange} onUnitChange={this.handleChange}
               units={{
                 cm: 'Centimeters (cm)',
@@ -147,7 +147,7 @@ class Calculator extends React.Component {
         <div className="form-group">
           <label htmlFor="sbp">Systolic Blood Pressure (mmHg)</label>
           <input className="form-control" name="sbp" type="number"
-            min="0" max="400" required step="any" value={sbp}
+            min="0" required step="any" value={sbp}
             placeholder="Ex: 120"
             onChange={this.handleChange}></input>
         </div>
@@ -156,7 +156,7 @@ class Calculator extends React.Component {
         <div className="form-group">
           <label htmlFor="hdl"><abbr title="High-density lipoprotein">HDL</abbr> (mg/dL)</label>
           <input className="form-control" name="hdl" type="number" required
-            min="0" max="100" step="any" value={hdl}
+            min="0" step="any" value={hdl}
             placeholder="Ex: 50"
             onChange={this.handleChange}></input>
         </div>
@@ -164,7 +164,7 @@ class Calculator extends React.Component {
         <div className="form-group">
           <label htmlFor="triglyceride">Triglycerides (mg/dL)</label>
           <input className="form-control" name="triglyceride" type="number"
-            min="0" max="600" step="any" required value={triglyceride}
+            min="0" step="any" required value={triglyceride}
             placeholder="Ex: 120"
             onChange={this.handleChange}></input>
         </div>
@@ -172,7 +172,7 @@ class Calculator extends React.Component {
         <div className="form-group">
           <label htmlFor="glucose">Fasting Glucose (mg/dL)</label>
           <input className="form-control" name="glucose" type="number"
-            min="0" max="500" step="any" required value={glucose}
+            min="0" step="any" required value={glucose}
             placeholder="Ex: 75"
             onChange={this.handleChange}></input>
         </div>
